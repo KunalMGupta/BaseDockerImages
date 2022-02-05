@@ -1,4 +1,4 @@
-FROM nvidia/cuda:11.2.2-cudnn8-devel-ubuntu20.04
+FROM nvidia/cuda:10.2-devel-ubuntu18.04
 
 ENV TZ=America/Tijuana
 RUN ln -snf /usr/share/zoneinfo/$TZ /etc/localtime && echo $TZ > /etc/timezone
@@ -22,6 +22,8 @@ RUN apt-get update && DEBIAN_FRONTEND=noninteractive apt-get install -y --no-ins
   locales \
   vim-gtk \
   lsb-release \
+  python \
+  python3-pip \
   zip \
   unzip \
   libjpeg-dev \
@@ -57,21 +59,40 @@ RUN curl -fOL https://github.com/cdr/code-server/releases/download/v${CODE_SERVE
 RUN dpkg -i ./code-server_${CODE_SERVER_VERSION}_${ARCH}.deb && rm ./code-server_${CODE_SERVER_VERSION}_${ARCH}.deb
 COPY ./entrypoint.sh /usr/bin/entrypoint.sh
 
-RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-2020.11-Linux-x86_64.sh -O ~/anaconda.sh && \
-    /bin/bash ~/anaconda.sh -b -p /opt/conda && \
-    rm ~/anaconda.sh && \
-    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
-    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
-    echo "conda activate base" >> ~/.bashrc
-ENV PATH /opt/conda/bin:$PATH
+#/usr/bin/code-server
+
+#RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-2020.11-Linux-x86_64.sh -O ~/anaconda.sh && \
+#    /bin/bash ~/anaconda.sh -b -p /opt/conda && \
+#    rm ~/anaconda.sh && \
+#    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+#    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+#    echo "conda activate base" >> ~/.bashrc
+#ENV PATH /opt/conda/bin:$PATH
+
+#RUN mkdir -p ~/.local/lib ~/.local/bin
+#RUN curl -sfL https://github.com/cdr/code-server/releases/download/v3.12.0/code-server-3.12.0-linux-amd64.tar.gz | tar -C ~/.local/lib -xz
+#RUN mv ~/.local/lib/code-server-3.12.0-linux-amd64 ~/.local/lib/code-server-3.12.0
+#RUN ln -s ~/.local/lib/code-server-3.12.0/bin/code-server ~/.local/bin/code-server
+#RUN PATH="~/.local/bin:$PATH"
 
 RUN curl -sfLO https://open-vsx.org/api/ms-toolsai/jupyter/2021.8.12/file/ms-toolsai.jupyter-2021.8.12.vsix \
  && curl -sfLO https://open-vsx.org/api/ms-python/python/2021.9.1218897484/file/ms-python.python-2021.9.1218897484.vsix \
- && code-server --install-extension ./ms-toolsai.jupyter-2021.8.12.vsix || true \
- && code-server --install-extension ./ms-python.python-2021.9.1218897484.vsix || true \
- && rm ms-toolsai.jupyter-2021.8.12.vsix \
- && rm ms-python.python-2021.9.1218897484.vsix
+ && /usr/bin/code-server --install-extension ./ms-toolsai.jupyter-2021.8.12.vsix || true \
+ && /usr/bin/code-server --install-extension ./ms-python.python-2021.9.1218897484.vsix || true 
+
+# && ~/.local/bin/code-server --install-extension ./ms-toolsai.jupyter-2021.8.12.vsix || true \
+# && ~/.local/bin/code-server --install-extension ./ms-python.python-2021.9.1218897484.vsix || true \
+# && rm ms-toolsai.jupyter-2021.8.12.vsix \
+# && rm ms-python.python-2021.9.1218897484.vsix
+
+#RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-2020.11-Linux-x86_64.sh -O ~/anaconda.sh && \
+#    /bin/bash ~/anaconda.sh -b -p /opt/conda && \
+#    rm ~/anaconda.sh && \
+#    ln -s /opt/conda/etc/profile.d/conda.sh /etc/profile.d/conda.sh && \
+#    echo ". /opt/conda/etc/profile.d/conda.sh" >> ~/.bashrc && \
+#    echo "conda activate base" >> ~/.bashrc
+#ENV PATH /opt/conda/bin:$PATH
 
 EXPOSE 8443
+#CMD [ "/bin/bash" ]
 ENTRYPOINT ["/usr/bin/entrypoint.sh", "--bind-addr", "0.0.0.0:8443","--auth","none", "--cert", "--disable-telemetry", "."]
-

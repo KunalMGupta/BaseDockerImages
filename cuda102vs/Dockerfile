@@ -65,6 +65,13 @@ RUN wget --quiet https://repo.anaconda.com/archive/Anaconda3-2020.11-Linux-x86_6
     echo "conda activate base" >> ~/.bashrc
 ENV PATH /opt/conda/bin:$PATH
 
+RUN curl -sfLO https://open-vsx.org/api/ms-toolsai/jupyter/2021.8.12/file/ms-toolsai.jupyter-2021.8.12.vsix \
+ && curl -sfLO https://open-vsx.org/api/ms-python/python/2021.9.1218897484/file/ms-python.python-2021.9.1218897484.vsix \
+ && code-server --install-extension ./ms-toolsai.jupyter-2021.8.12.vsix || true \
+ && code-server --install-extension ./ms-python.python-2021.9.1218897484.vsix || true \
+ && rm ms-toolsai.jupyter-2021.8.12.vsix \
+ && rm ms-python.python-2021.9.1218897484.vsix
 
 EXPOSE 8443
 ENTRYPOINT ["/usr/bin/entrypoint.sh", "--bind-addr", "0.0.0.0:8443","--auth","none", "--cert", "--disable-telemetry", "."]
+

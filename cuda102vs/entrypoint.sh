@@ -17,4 +17,5 @@ if [ "${DOCKER_USER-}" ] && [ "$DOCKER_USER" != "$USER" ]; then
   sudo sed -i "/coder/d" /etc/sudoers.d/nopasswd
 fi
 
+#dumb-init ~/.local/bin/code-server "$@"
 dumb-init /usr/bin/code-server "$@"
