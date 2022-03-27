@@ -72,6 +72,6 @@ RUN curl -sfLO https://open-vsx.org/api/ms-toolsai/jupyter/2021.8.12/file/ms-too
  && rm ms-toolsai.jupyter-2021.8.12.vsix \
  && rm ms-python.python-2021.9.1218897484.vsix
 
-EXPOSE 8443
+EXPOSE 8443 8888 8889 8890 8891 8892 8893 8894 8895 8896 8897 8898 8899 8900 8901 8902 8903 8904 8905 8906 8907 8908 8909 8910 8911 8912 8913 8914 8915 8916 8917
 ENTRYPOINT ["/usr/bin/entrypoint.sh", "--bind-addr", "0.0.0.0:8443","--auth","none", "--cert", "--disable-telemetry", "."]
 
